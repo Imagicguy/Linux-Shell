@@ -1,0 +1,2 @@
+1.pipe signal "|" needs one space before and after it .because the shell separates input command to arguments first ,then decides whether
+  this command needs to pipe.

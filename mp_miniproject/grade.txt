@@ -1,0 +1,3 @@
+Grade: 96.8
+Comments:
+both echo $PATH and echo $ECE551PATH do not work. > should clear the output file first. Good abstraction and documentation! Formatting suggestion: too many the implementations are in the .h files. Command should put into a file called Command.h instead of newcommand.h, so as Environ. valgrind not clean after setting a variable.

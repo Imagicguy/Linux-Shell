@@ -1,0 +1,798 @@
+All testcases are valgrind clean and follow the order of commandShell.txt
+=======================================================================================
+
+
+step 1 : Read a command name and, run it
+***************************************************************************************
+
+1.1 Run ./myShell
+---------------------------------------------------------------------------------------
+******************************************
+
+
+        ****MY SHELL****
+
+        -AUTHOR: Haili Wu-
+
+
+
+******************************************
+myShell:/home/hw210/ece551/mp_miniproject $
+----------------------------------------------------------------------------------------
+
+explanation :
+"./myShell" opens the shell and initilize it with welcome page,then output the current
+directory.
+
+1.2 Run ./myShell
+myShell:/home/hw210/ece551/mp_miniproject $exit
+---------------------------------------------------------------------------------------
+Goodbye!
+hw210@ece551:~/ece551/mp_miniproject$
+--------------------------------------------------------------------------------------
+
+explanation :
+"exit" quits the shell and return to the current directory
+
+1.3 Run ./myShell
+myShell:/home/hw210/ece551/mp_miniproject $EOF
+--------------------------------------------------------------------------------------
+hw210@ece551:~/ece551/mp_miniproject$
+--------------------------------------------------------------------------------------
+
+explanation :
+EOF quits the shell and return to the current directory
+
+1.4 Run ./myShell
+myShell:/home/hw210/ece551/mp_miniproject $/bin/ls
+--------------------------------------------------------------------------------------
+ buildIn.h   commandShell.txt   environment.h   execute.h   Makefile   myShell   myShell.cpp   newcommand.h   pipe.h   README  '#TESTING.txt#'   TESTING.txt   TESTING.txt~   testProgram   valgrind-out.txt
+Program exited with status 0
+myShell:/home/hw210/ece551/mp_miniproject $
+--------------------------------------------------------------------------------------
+
+explanation :
+"/bin/ls" lists all files under current directory and exits with status 0
+
+1.5 Run ./myShell
+myShell:/home/hw210/ece551/mp_miniproject $/usr/bin/clear
+-------------------------------------------------------------------------------------
+Program exited with status 0
+myShell:/home/hw210/ece551/mp_miniproject $
+-------------------------------------------------------------------------------------
+
+explanation :
+"clear" cleans current pages and prints "Program exited with status 0"
+
+1.6 Run ./myShell
+myShell:/home/hw210/ece551/mp_miniproject $/bin/ls dd
+-------------------------------------------------------------------------------------
+/bin/ls: cannot access 'dd': No such file or directory
+Program exited with status 2
+myShell:/home/hw210/ece551/mp_miniproject $
+-------------------------------------------------------------------------------------
+
+explanation :
+"/bin/ls dd" tries to list non-exist directory and failed with printing "Program exited with status 2" 
+
+1.7 Run ./myShell ./myShell
+------------------------------------------------------------------------------------
+myShell:/home/hw210/ece551/mp_miniproject $ls
+ buildIn.h   commandShell.txt   environment.h   execute.h   Makefile   myShell   myShell.cpp   newcommand.h   pipe.h   README  '#TESTING.txt#'   TESTING.txt   testProgram   valgrind-out.txt
+Program exited with status 0
+myShell:/home/hw210/ece551/mp_miniproject $exit
+Goodbye!
+Program exited with status 0
+myShell:/home/hw210/ece551/mp_miniproject $exit
+Goodbye!
+hw210@ece551:~/ece551/mp_miniproject$
+------------------------------------------------------------------------------------
+
+explanation:
+in this test case,we enter two layer of shell,so we need exit twice to quit.build-In
+function "ls" works .
+
+
+
+
+
+
+
+
+step 2: Improving commands
+************************************************************************************
+
+2.1 Run ./myShell
+myShell:/home/hw210/ece551/mp_miniproject $ls
+------------------------------------------------------------------------------------
+ buildIn.h   commandShell.txt   environment.h   execute.h   Makefile   myShell   myShell.cpp   newcommand.h   pipe.h   README  '#TESTING.txt#'   TESTING.txt   TESTING.txt~   testProgram   valgrind-out.txt
+Program exited with status 0
+myShell:/home/hw210/ece551/mp_miniproject $
+-----------------------------------------------------------------------------------
+
+explanation:
+users input "ls" command,the shell search in "PATH" of environment variables for this command ,if found ,return the correct output of "ls"。
+
+2.2 Run ./myShell
+myShell:/home/hw210/ece551/mp_miniproject $dsf
+-----------------------------------------------------------------------------------
+Command dsf not found
+myShell:/home/hw210/ece551/mp_miniproject $
+----------------------------------------------------------------------------------
+
+explanation:
+users input "dsf" command,the shell searchs in "PATH" of environment variables for this command,it is not found,print "Command dsf not found".
+
+2.3 Run ./myShell
+myShell:/home/hw210/ece551/mp_miniproject $testProgram/hello
+----------------------------------------------------------------------------------
+Hello World!
+Program exited with status 0
+myShell:/home/hw210/ece551/mp_miniproject $
+---------------------------------------------------------------------------------
+
+explanation:
+users input command "testProgram/hello",which has a  path in it,so the shell would only search the given path.it is found,then executes 'hello' file and returns correct answer.
+
+2.4 Run ./myShell
+myShell:/home/hw210/ece551/mp_miniproject $/ece551/ls
+--------------------------------------------------------------------------------
+ERROR: No such file or directory
+command unexecutable!
+Program exited with status 0
+myShell:/home/hw210/ece551/mp_miniproject $
+--------------------------------------------------------------------------------
+
+explanation:
+users input command "/ece551/ls" ,which has an absolute path in it,so the shell would only search the  given path,it is not found ,then print "ERROR : No such file or directory" and exit program.
+
+2.5 Run ./myShell
+myShell:/home/hw210/ece551/mp_miniproject $testProgram/PrintAllArgument a b c
+--------------------------------------------------------------------------------
+argument 0 is: testProgram/PrintAllArgument
+argument 1 is: a
+argument 2 is: b
+argument 3 is: c
+Program exited with status 0
+myShell:/home/hw210/ece551/mp_miniproject $
+-------------------------------------------------------------------------------
+
+explanation:
+users input command "testProgram/PrintAllArgument a b c",the shell gets input command line ,splits it by ' '(space) and prints out all arguements in correct order.
+
+2.6 Run ./myShell
+myShell:/home/hw210/ece551/mp_miniproject $testProgram/PrintAllArgument a     d     23
+-------------------------------------------------------------------------------
+argument 0 is: testProgram/PrintAllArgument
+argument 1 is: a
+argument 2 is: d
+argument 3 is: 23
+Program exited with status 0
+myShell:/home/hw210/ece551/mp_miniproject $
+-------------------------------------------------------------------------------
+
+explanation:
+users input command "testProgram/PrintAllArgument a     d     23 ",the shell gets input command line ,splits it by ' '(space) ,skip all space between two arguements and  prints out all arguements in correct order.
+
+2.7 Run ./myShell
+myShell:/home/hw210/ece551/mp_miniproject $testProgram/PrintAllArgument a\  b c\ \ d
+------------------------------------------------------------------------------
+argument 0 is: testProgram/PrintAllArgument
+argument 1 is: a
+argument 2 is: b
+argument 3 is: c  d
+Program exited with status 0
+myShell:/home/hw210/ece551/mp_miniproject $
+------------------------------------------------------------------------------
+
+explanation:
+users input command "testProgram/PrintAllArgument a\  b c\ \ d",in this command ,"\ "should be interpreted as " " and ' 'in "\ " should not be seen as the cut signal of argument ,so the correct arguments are "testProgram/PrintAllargument","a ","b" and "c  d".
+
+2.8 Run ./myShell
+myShell:/home/hw210/ece551/mp_miniproject $testProgram/PrintAllArgument a b\\\ c d
+-----------------------------------------------------------------------------
+argument 0 is: testProgram/PrintAllArgument
+argument 1 is: a
+argument 2 is: b\ c
+argument 3 is: d
+Program exited with status 0
+myShell:/home/hw210/ece551/mp_miniproject $
+----------------------------------------------------------------------------
+
+explanation:
+users input command "testProgram/PrintAllArgument a b\\\ c d",in this command, "\\" should be interpreted as "\" and "\ " should be interpreted as " ",so the correct arguments are "testProgram/PrintAllargument","a","b\ c" and "d".
+
+2.9 Run ./myShell
+myShell:/home/hw210/ece551/mp_miniproject $testProgram/PrintAllArgument a b\ \ \\\\c
+----------------------------------------------------------------------------
+argument 0 is: testProgram/PrintAllArgument
+argument 1 is: a
+argument 2 is: b  \\c
+Program exited with status 0
+myShell:/home/hw210/ece551/mp_miniproject $
+---------------------------------------------------------------------------
+
+explanation:
+users input command "testProgram/PrintAllArgument a b\ \ \\\\c",in this command,"\\"should be interpreted as "\" and "\ " should be interpreted as " ",so the correct arguments are "testProgram/PrintAllargument","a" and "b  \\c".
+
+2.10 Run ./myShell
+myShell:/home/hw210/ece551/mp_miniproject $testProgram/PrintAllArgument 1 2 3 4 5 8 7 6 5 12 23 34 56 76 98 33 11 22 4 3 1 1 12r3r 33
+--------------------------------------------------------------------------
+argument 0 is: testProgram/PrintAllArgument
+argument 1 is: 1
+argument 2 is: 2
+argument 3 is: 3
+argument 4 is: 4
+argument 5 is: 5
+argument 6 is: 8
+argument 7 is: 7
+argument 8 is: 6
+argument 9 is: 5
+argument 10 is: 12
+argument 11 is: 23
+argument 12 is: 34
+argument 13 is: 56
+argument 14 is: 76
+argument 15 is: 98
+argument 16 is: 33
+argument 17 is: 11
+argument 18 is: 22
+argument 19 is: 4
+argument 20 is: 3
+argument 21 is: 1
+argument 22 is: 1
+argument 23 is: 12r3r
+argument 24 is: 33
+Program exited with status 0
+myShell:/home/hw210/ece551/mp_miniproject $
+------------------------------------------------------------------------
+
+explanation:
+this test case shows arguements  separating works when user input a command line with many arguments.
+
+2.11 Run ./myShell
+myShell:/home/hw210/ece551/mp_miniproject $testProgram/PrintUserInput
+-----------------------------------------------------------------------
+aaa
+aaa
+bbb
+bbb
+a d d
+a d d
+ee ee \ \
+ee ee \ \
+Program exited with status 0
+myShell:/home/hw210/ece551/mp_miniproject $
+----------------------------------------------------------------------
+
+explanation:
+'testProgram/printUserInput' takes user input line by line and print it out correctly.
+
+2.12 Run ./myShell
+myShell:/home/hw210/ece551/mp_miniproject $./testProgram/PrintAllArgument a b\\\
+---------------------------------------------------------------------
+argument 0 is: ./testProgram/PrintAllArgument
+argument 1 is: a
+argument 2 is: b\
+Program exited with status 0
+myShell:/home/hw210/ece551/mp_miniproject $
+--------------------------------------------------------------------
+
+explanation:
+this command's arguments end with "\\\",the first two '\' are interpreted as "\" and the third one is the invalid one ,so I deal it by ignoring it .So the correct output are " ./testProgram/PrintAllArgument","a" and "b\".
+
+
+
+
+
+
+
+
+step 3: Directories and variables
+*************************************************************************************************
+3.1 Run ./myShell
+myShell:/home/hw210/ece551/mp_miniproject $cd testProgram
+-------------------------------------------------------------------
+myShell:/home/hw210/ece551/mp_miniproject/testProgram $
+-------------------------------------------------------------------
+
+explanation:
+bulid-in function "cd" is called with argument "testProgram",because no "/" in argument in command line,so the shell searches "testProgram" in current directory ."testProgram " is found ,then shell goes to this directory.
+
+3.2 Run ./myShell
+myShell:/home/hw210/ece551/mp_miniproject $cd non-exist
+------------------------------------------------------------------
+cd failed!
+myShell:/home/hw210/ece551/mp_miniproject $
+------------------------------------------------------------------
+
+explanation:
+bulid-in function "cd" is called with argument "non-exist",because no "/" in argument in command line,so the shell searches "non-exist" in current directory ."non-exist " is not found ,so the shell prints out error information " cd failed!".
+
+3.3 Run ./myShell
+myShell:/home/hw210/ece551/mp_miniproject $cd ..
+-----------------------------------------------------------------
+myShell:/home/hw210/ece551 $
+-----------------------------------------------------------------
+
+explanation:
+bulid-in function "cd" is called with argument "..",so the shell goes to the upper directory and sets it as current directory.
+
+3.4 Run ./myShell
+myShell:/home/hw210/ece551/mp_miniproject $cd
+----------------------------------------------------------------
+myShell:/home/hw210 $
+----------------------------------------------------------------
+
+explanation:
+bulid_in function "cd " is called with no argument ,so the shell should goes to the Home directory .
+
+3.5 Run ./myShell
+myShell:/home/hw210/ece551/mp_miniproject $set aaa 111
+myShell:/home/hw210/ece551/mp_miniproject $echo $aaa
+---------------------------------------------------------------
+111
+Program exited with status 0
+myShell:/home/hw210/ece551/mp_miniproject $
+--------------------------------------------------------------
+explanation:
+bulid_in function "set" set variable "aaa" with value "111",so when echo "$aaa",it print out the value of variable"aaa".
+
+3.6 Run ./myShell
+--------------------------------------------------------------
+myShell:/home/hw210/ece551/mp_miniproject $set aaa 111
+myShell:/home/hw210/ece551/mp_miniproject $env | grep aaa
+myShell:/home/hw210/ece551/mp_miniproject $export aaa
+myShell:/home/hw210/ece551/mp_miniproject $env | grep aaa
+aaa=111
+myShell:/home/hw210/ece551/mp_miniproject $
+-------------------------------------------------------------
+
+explanation:
+in this case,I set variable "aaa" with value "111",and check environment variable now,because I don't export "aaa" yet,so command "env | grep aaa" does not get this variable.But after I input command "export aaa",variable "aaa" has been exported to environment variable.Now Check environment variable with "env | grep aaa",it return this variable with pair form "aaa=111".
+
+3.7 Run ./myShell
+myShell:/home/hw210/ece551/mp_miniproject $set aaa ls
+myShell:/home/hw210/ece551/mp_miniproject $$aaa
+------------------------------------------------------------
+buildIn.h   commandShell.txt   environment.h   execute.h   Makefile   myShell   myShell.cpp   newcommand.h   pipe.h   README  '#TESTING.txt#'   TESTING.txt   testProgram   valgrind-out.txt
+Program exited with status 0
+myShell:/home/hw210/ece551/mp_miniproject $
+------------------------------------------------------------
+
+explanation:
+in this case ,command line sets variable "aaa" with value "ls",so when type in "$aaa",it is replaced by "ls",which is a buildin function of this shell,so all the files under this directory are listed.
+
+3.8 Run ./myShell
+-----------------------------------------------------------
+myShell:/home/hw210/ece551/mp_miniproject $set variable I am the value and I have space
+myShell:/home/hw210/ece551/mp_miniproject $export variable
+myShell:/home/hw210/ece551/mp_miniproject $env | grep variable
+variable=I am the value and I have space
+myShell:/home/hw210/ece551/mp_miniproject $
+----------------------------------------------------------
+
+explanation:
+in this case, command line sets variable "variable" with value "I am the value and I have space",this value has space .set should take first argument as variable name and set remain command line as value even it contains space.
+
+3.9 Run ./myShell
+myShell:/home/hw210/ece551/mp_miniproject $set aa ls
+myShell:/home/hw210/ece551/mp_miniproject $set vv $aa
+myShell:/home/hw210/ece551/mp_miniproject $$vv
+---------------------------------------------------------
+buildIn.h  commandShell.txt  environment.h  execute.h  Makefile  myShell  myShell.cpp  newcommand.h  pipe.h  README  TESTING.txt  testProgram  valgrind-out.txt
+Program exited with status 0
+myShell:/home/hw210/ece551/mp_miniproject $
+---------------------------------------------------------
+
+explanation:
+in this case,we set variable"aa" with value "ls",then set variable"vv" with value "$aa",because aa's value is "ls ",so actually we set vv with value "ls".Then we type in "$vv",which equals to "ls",the shell prints all files under current directoriy.
+
+3.10 Run ./myShell
+---------------------------------------------------------
+myShell:/home/hw210/ece551/mp_miniproject $set aaa^ value
+it is not a vaild name !
+myShell:/home/hw210/ece551/mp_miniproject $set --- value
+it is not a vaild name !
+myShell:/home/hw210/ece551/mp_miniproject $set \ value
+it is not a vaild name !
+myShell:/home/hw210/ece551/mp_miniproject $
+--------------------------------------------------------
+
+explanation:
+the shell detects the invalid names and prints out this error.
+
+3.11 Run ./myShell
+--------------------------------------------------------
+myShell:/home/hw210/ece551/mp_miniproject $set aaa 1111
+myShell:/home/hw210/ece551/mp_miniproject $echo $aaa
+1111
+Program exited with status 0
+myShell:/home/hw210/ece551/mp_miniproject $set aaa 2222
+myShell:/home/hw210/ece551/mp_miniproject $echo $aaa
+2222
+Program exited with status 0
+myShell:/home/hw210/ece551/mp_miniproject $
+-------------------------------------------------------
+
+explanation:
+in this test case ,we set "aaa" to "1111" first,then set "aaa" to "2222",this new set would cover the old value of "aaa",so the new value is "2222".
+
+3.12 Run ./myShell
+-------------------------------------------------------
+myShell:/home/hw210/ece551/mp_miniproject $set aaa 1111
+myShell:/home/hw210/ece551/mp_miniproject $inc aaa
+myShell:/home/hw210/ece551/mp_miniproject $inc aaa
+myShell:/home/hw210/ece551/mp_miniproject $echo $aaa
+1111
+Program exited with status 0
+myShell:/home/hw210/ece551/mp_miniproject $
+------------------------------------------------------
+
+explanation:
+in this test case ,we set "aaa" to "1111",and increments it base10 .
+
+3.13 Run ./myShell
+--------------------------------------------------------
+myShell:/home/hw210/ece551/mp_miniproject $set abc 123
+myShell:/home/hw210/ece551/mp_miniproject $set def 456
+myShell:/home/hw210/ece551/mp_miniproject $echo $abc$def
+123456
+Program exited with status 0
+myShell:/home/hw210/ece551/mp_miniproject $
+-------------------------------------------------------
+
+explanation:
+in this case ,two variables do not have space between them,this is legal for set ,so the shell print out values correctly.
+
+3.14 Run ./myShell
+myShell:/home/hw210/ece551/mp_miniproject $set aaa 1111
+myShell:/home/hw210/ece551/mp_miniproject $env
+----------------------------------------------------------
+LS_COLORS=rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.Z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:
+SSH_CONNECTION=174.109.113.82 54571 152.3.77.223 22
+LESSCLOSE=/usr/bin/lesspipe %s %s
+LANG=en_US.UTF-8
+EDITOR=emacs -nw
+S_COLORS=auto
+XDG_SESSION_ID=83492
+USER=hw210
+PWD=/home/hw210/ece551/mp_miniproject
+HOME=/home/hw210
+SSH_CLIENT=174.109.113.82 54571 22
+SSH_TTY=/dev/pts/0
+MAIL=/var/mail/hw210
+VISUAL=emacs -nw
+TERM=xterm
+SHELL=/bin/bash
+SHLVL=1
+LOGNAME=hw210
+XDG_RUNTIME_DIR=/run/user/1330
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games
+LESSOPEN=| /usr/bin/lesspipe %s
+OLDPWD=/home/hw210/ece551
+_=./myShell
+Program exited with status 0
+myShell:/home/hw210/ece551/mp_miniproject $export aaa
+myShell:/home/hw210/ece551/mp_miniproject $env
+LS_COLORS=rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.Z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:
+SSH_CONNECTION=174.109.113.82 54571 152.3.77.223 22
+LESSCLOSE=/usr/bin/lesspipe %s %s
+LANG=en_US.UTF-8
+EDITOR=emacs -nw
+S_COLORS=auto
+XDG_SESSION_ID=83492
+USER=hw210
+PWD=/home/hw210/ece551/mp_miniproject
+HOME=/home/hw210
+SSH_CLIENT=174.109.113.82 54571 22
+SSH_TTY=/dev/pts/0
+MAIL=/var/mail/hw210
+VISUAL=emacs -nw
+TERM=xterm
+SHELL=/bin/bash
+SHLVL=1
+LOGNAME=hw210
+XDG_RUNTIME_DIR=/run/user/1330
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games
+LESSOPEN=| /usr/bin/lesspipe %s
+OLDPWD=/home/hw210/ece551
+_=./myShell
+aaa=1111
+Program exited with status 0
+myShell:/home/hw210/ece551/mp_miniproject $
+---------------------------------------------------------
+
+explanation:
+in this test case,I set a variable and export it to environment variables,then I type in "./myShell" and enter another shell.Because the variable "aaa" has already export to environment variable,so by typing in command "env",we can see it is already in the second shell's environment variable.
+
+3.14 Run ./myShell
+myShell:/home/hw210/ece551/mp_miniproject $set a b\ ccc d d\\d
+myShell:/home/hw210/ece551/mp_miniproject $echo $a
+--------------------------------------------------------
+b ccc d d\d
+Program exited with status 0
+myShell:/home/hw210/ece551/mp_miniproject $
+-------------------------------------------------------
+
+explanation:
+in this test case,'set' also parse '\ ' and '\\'correctly.
+
+3.15 Run ./myShell
+-------------------------------------------------------
+myShell:/home/hw210/ece551/mp_miniproject $cd ..
+myShell:/home/hw210/ece551 $cd mp_miniproject
+myShell:/home/hw210/ece551/mp_miniproject $cd testProgram
+myShell:/home/hw210/ece551/mp_miniproject/testProgram $
+------------------------------------------------------
+
+explanation:
+in this case,we change the current directoriy by "cd " command,and the path in prompt is also chaning with current path.
+
+3.16 Run ./myShell
+myShell:/home/hw210/ece551/mp_miniproject $set aaa 12
+myShell:/home/hw210/ece551/mp_miniproject $inc aaa
+myShell:/home/hw210/ece551/mp_miniproject $echo $aaa
+------------------------------------------------------
+13
+Program exited with status 0
+-----------------------------------------------------
+myShell:/home/hw210/ece551/mp_miniproject $set aaa bbb
+myShell:/home/hw210/ece551/mp_miniproject $inc aaa
+myShell:/home/hw210/ece551/mp_miniproject $echo $aaa
+-----------------------------------------------------
+1
+Program exited with status 0
+-----------------------------------------------------
+myShell:/home/hw210/ece551/mp_miniproject $inc d
+myShell:/home/hw210/ece551/mp_miniproject $echo $d
+-----------------------------------------------------
+1
+Program exited with status 0
+myShell:/home/hw210/ece551/mp_miniproject $
+----------------------------------------------------
+
+explanation:
+in this test case,we first set variable "aaa" with value "12",because this value can be interpreted as number ,so when we type in "inc aaa",it value is incremented to 13.
+Then we set variable "aaa" with value "bbb",this value can not be interpreted to a number directly,so we initialize it value to 0 and increment it to 1.
+In the lase case,we directly "inc" a new key,which is not existed in current variable map,so the shell create a new variable "d" with value "0",and increment the value to "1".
+
+
+
+
+
+
+
+
+step 4: Pipes and Redirection
+***************************************************************************************************
+
+Notice:
+__________________________________________________________________________________________________
+pipe signal "|" needs one space before and after it .because this shell separates input command to arguments first ,then decides whether this command needs to pipe.
+__________________________________________________________________________________________________
+
+
+4.1 Run ./myShell
+myShell:/home/hw210/ece551/mp_miniproject $ls > result.txt
+Program exited with status 0
+myShell:/home/hw210/ece551/mp_miniproject $cat result.txt
+---------------------------------------------------------
+buildIn.h
+commandShell.txt
+environment.h
+execute.h
+Makefile
+myShell
+myShell.cpp
+newcommand.h
+pipe.h
+README
+result.txt
+TESTING.txt
+testProgram
+valgrind-out.txt
+Program exited with status 0
+myShell:/home/hw210/ece551/mp_miniproject $
+--------------------------------------------------------
+
+explanation:
+in this test case,we use ">" redirects output from stdout  to result.txt,so the result of ls should be written to result.txt.
+
+4.2 Run ./myShell
+myShell:/home/hw210/ece551/mp_miniproject/testProgram $./PrintUserInput < hello.txt
+--------------------------------------------------------
+Hello World!
+Program exited with status 0
+myShell:/home/hw210/ece551/mp_miniproject/testProgram $
+-------------------------------------------------------
+
+explanation:
+in this test case,we use "<" redirects input from stdinput to hello.txt,so the result of PrintUserInput is printed on screen.
+
+4.3 Run ./myShell
+myShell:/home/hw210/ece551/mp_miniproject $lsss 2> error.txt
+-------------------------------------------------------
+Command lsss not found
+myShell:/home/hw210/ece551/mp_miniproject $cat error.txt
+/bin/cat: error.txt: No such file or directory
+Program exited with status 1
+myShell:/home/hw210/ece551/mp_miniproject $
+------------------------------------------------------
+
+explanation:
+in this test case,we use "2>" redirects standard error to error.txt,so the result of "lsss" is written in error.txt.
+
+4.4 Run ./myShell
+myShell:/home/hw210/ece551/mp_miniproject/testProgram $cat a.txt
+------------------------------------------------------
+add
+add.cpp
+hello
+Hello.cpp
+hello.txt
+PrintUserInput
+PrintUserInput.cpp
+result.txt
+Program exited with status 0
+-----------------------------------------------------
+myShell:/home/hw210/ece551/mp_miniproject/testProgram $./PrintUserInput < a.txt > b.txt
+----------------------------------------------------
+Program exited with status 0
+----------------------------------------------------
+myShell:/home/hw210/ece551/mp_miniproject/testProgram $cat b.txt
+add
+add.cpp
+hello
+Hello.cpp
+hello.txt
+PrintUserInput
+PrintUserInput.cpp
+result.txt
+Program exited with status 0
+myShell:/home/hw210/ece551/mp_miniproject/testProgram $
+----------------------------------------------------
+
+explanation:
+in this test case,we combine "<" and ">" to redict standard input and standard output .PrintUserinput gets input from a.txt and outputs to b.txt.
+
+4.5 Run ./myShell
+myShell:/home/hw210/ece551/mp_miniproject $ls | grep e
+---------------------------------------------------
+commandShell.txt
+environment.h
+execute.h
+Makefile
+myShell
+myShell.cpp
+newcommand.h
+pipe.h
+testProgram
+--------------------------------------------------
+myShell:/home/hw210/ece551/mp_miniproject $cd testProgram
+myShell:/home/hw210/ece551/mp_miniproject/testProgram $ls | ./PrintUserInput
+-------------------------------------------------
+add
+add.cpp
+a.txt
+b.txt
+exportText.cpp
+hello
+Hello.cpp
+hello.txt
+largeData.txt
+PrintAllArgument
+PrintAllArgument.cpp
+PrintUserInput
+PrintUserInput.cpp
+result.txt
+testParse
+myShell:/home/hw210/ece551/mp_miniproject/testProgram $
+------------------------------------------------
+
+explanation:
+in this test case,we test pipe by pipe command "ls"'s output to "grep e" as input,then "grep e" prints all elements contain 'e'.
+
+4.6 Run ./myShell
+myShell:/home/hw210/ece551/mp_miniproject $ls | grep e | grep ex
+---------------------------------------------------------
+execute.h
+--------------------------------------------------------
+myShell:/home/hw210/ece551/mp_miniproject $cd testProgram
+myShell:/home/hw210/ece551/mp_miniproject/testProgram $ls | ./PrintUserInput | ./PrintUserInput > ls.txt
+myShell:/home/hw210/ece551/mp_miniproject/testProgram $cat ls.txt
+--------------------------------------------------------
+add
+add.cpp
+a.txt
+b.txt
+exportText.cpp
+hello
+Hello.cpp
+hello.txt
+largeData.txt
+ls.txt
+PrintAllArgument
+PrintAllArgument.cpp
+PrintUserInput
+PrintUserInput.cpp
+result.txt
+testParse
+Program exited with status 0
+myShell:/home/hw210/ece551/mp_miniproject/testProgram $
+------------------------------------------------------
+
+explanation:
+in this test case,we use multi-pipe,"ls"'s result goes through 2 "./PrintUserInput" and then be written to ls.txt.
+
+4.7 Run ./myShell
+myShell:/home/hw210/ece551/mp_miniproject $ls      >          dd.txt
+-----------------------------------------------------
+Program exited with status 0
+myShell:/home/hw210/ece551/mp_miniproject $cat dd.txt
+buildIn.h
+commandShell.txt
+dd.txt
+environment.h
+execute.h
+Makefile
+myShell
+myShell.cpp
+newcommand.h
+pipe.h
+README
+TESTING.txt
+testProgram
+valgrind-out.txt
+Program exited with status 0
+----------------------------------------------------
+
+explanation:
+in this case, we use redirection to redict standard output with many space between each argument,it separates arguments corretly and  works fine with those space.
+
+4.8 Run ./myShell
+myShell:/home/hw210/ece551/mp_miniproject/testProgram $./PrintUserInput < largeData.txt | ./PrintUserInput | ./PrintUserInput | wc -l > ld.txt
+myShell:/home/hw210/ece551/mp_miniproject/testProgram $cat ld.txt
+-----------------------------------------------------
+240
+-----------------------------------------------------
+
+explanation:
+in this test case,we redirect the input of "./PrintUserInput" to the largeData.txt,and go through multi-pipe,then redirect the output to ld.txt."cat" the ld.txt,we get line number of largeData.txt.
+we can see this pipe implemenation does not deadlock on a longer input.
+this test case also combine redirection with multi-pipe,we redirect the input to largeData.txt,go through multi-pipes ,then print the output in ld.txt.
+
+4.8 Run ./myShell
+myShell:/home/hw210/ece551/mp_miniproject $cd testProgram
+myShell:/home/hw210/ece551/mp_miniproject/testProgram $cat < add.cpp | ./PrintArgAndInput a b c\ \\d | ./PrintUserInput > ans.txt
+myShell:/home/hw210/ece551/mp_miniproject/testProgram $cat ans.txt
+----------------------------------------------------------------------
+#include <stdio.h>
+#include <stdlib.h>
+
+#include <iostream>
+
+using namespace std;
+int main(int argc, char ** argv, char ** env) {
+  int result = 0;
+  if (argc != 3) {
+    cout << "need 2 adder !" << endl;
+  }
+  else {
+    result = atoi(argv[1]) + atoi(argv[2]);
+    cout << result << " = " << argv[1] << " + " << argv[2] << endl;
+  }
+  return result;
+}
+./PrintArgAndInput
+a
+b
+c \d
+Program exited with status 0
+myShell:/home/hw210/ece551/mp_miniproject/testProgram $
+--------------------------------------------------------------------
+
+explanation:
+int this test case,I combine redirection ,multi-pipe and multi-arguments function together."cat" gets input from add.cpp,then passes output
+to ./PrintArgAndInput../PrintArgAndInput gets standard input and arguments,then prints them out to ./PrintUserInput,./PrintUserinput print
+the final result to ans.txt.
